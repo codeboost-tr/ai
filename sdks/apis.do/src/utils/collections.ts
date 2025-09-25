@@ -31,6 +31,7 @@ export const COLLECTIONS = [
   'actions',
   'experiments',
   'experimentMetrics',
+  'variants',
   'models',
   'providers',
   'labs',

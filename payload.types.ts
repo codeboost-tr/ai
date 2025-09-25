@@ -94,6 +94,7 @@ export interface Config {
     actions: Action;
     experiments: Experiment;
     experimentMetrics: ExperimentMetric;
+    variants: Variant;
     models: Model;
     providers: Provider;
     labs: Lab;
@@ -189,6 +190,7 @@ export interface Config {
     actions: ActionsSelect<false> | ActionsSelect<true>;
     experiments: ExperimentsSelect<false> | ExperimentsSelect<true>;
     experimentMetrics: ExperimentMetricsSelect<false> | ExperimentMetricsSelect<true>;
+    variants: VariantsSelect<false> | VariantsSelect<true>;
     models: ModelsSelect<false> | ModelsSelect<true>;
     providers: ProvidersSelect<false> | ProvidersSelect<true>;
     labs: LabsSelect<false> | LabsSelect<true>;
@@ -1781,29 +1783,7 @@ export interface Experiment {
   /**
    * Different variations to test in this experiment
    */
-  variants: {
-    id: string | null;
-    /**
-     * Description of this variant
-     */
-    description?: string | null;
-    /**
-     * Whether this is the control/baseline variant
-     */
-    isControl?: boolean | null;
-    /**
-     * Configuration values for this variant
-     */
-    config:
-      | {
-          [k: string]: unknown;
-        }
-      | unknown[]
-      | string
-      | number
-      | boolean
-      | null;
-  }[];
+  variants?: (string | Variant)[] | null;
   /**
    * Metrics to track for this experiment
    */
@@ -1890,6 +1870,41 @@ export interface Experiment {
   createdAt: string;
 }
 /**
+ * Variations of an experiment
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "variants".
+ */
+export interface Variant {
+  id: string;
+  /**
+   * Unique identifier for this variant
+   */
+  name: string;
+  /**
+   * Description of this variant
+   */
+  description?: string | null;
+  /**
+   * Whether this is the control/baseline variant
+   */
+  isControl?: boolean | null;
+  /**
+   * Configuration values for this variant
+   */
+  config:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Metrics collected from real-world user feedback for experiments
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1900,15 +1915,15 @@ export interface ExperimentMetric {
   /**
    * The experiment this metric is associated with
    */
-  experimentId: string | Experiment;
+  experiment: string | Experiment;
   /**
-   * The variant ID this metric is for
+   * The variant this metric is for
    */
-  variantId: string;
+  variant: string | Variant;
   /**
-   * User ID associated with this metric (if available)
+   * User associated with this metric (if available)
    */
-  userId?: string | null;
+  user?: (string | null) | User;
   /**
    * Session ID associated with this metric (if available)
    */
@@ -3098,6 +3113,10 @@ export interface PayloadLockedDocument {
         value: string | ExperimentMetric;
       } | null)
     | ({
+        relationTo: 'variants';
+        value: string | Variant;
+      } | null)
+    | ({
         relationTo: 'models';
         value: string | Model;
       } | null)
@@ -3806,14 +3825,7 @@ export interface ExperimentsSelect<T extends boolean = true> {
   description?: T;
   status?: T;
   provider?: T;
-  variants?:
-    | T
-    | {
-        id?: T;
-        description?: T;
-        isControl?: T;
-        config?: T;
-      };
+  variants?: T;
   metrics?:
     | T
     | {
@@ -3845,14 +3857,26 @@ export interface ExperimentsSelect<T extends boolean = true> {
  * via the `definition` "experimentMetrics_select".
  */
 export interface ExperimentMetricsSelect<T extends boolean = true> {
-  experimentId?: T;
-  variantId?: T;
-  userId?: T;
+  experiment?: T;
+  variant?: T;
+  user?: T;
   sessionId?: T;
   metricName?: T;
   value?: T;
   timestamp?: T;
   metadata?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "variants_select".
+ */
+export interface VariantsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  isControl?: T;
+  config?: T;
   updatedAt?: T;
   createdAt?: T;
 }

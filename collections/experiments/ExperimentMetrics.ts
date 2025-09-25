@@ -9,7 +9,7 @@ export const ExperimentMetrics: CollectionConfig = {
   },
   fields: [
     {
-      name: 'experimentId',
+      name: 'experiment',
       type: 'relationship',
       relationTo: 'experiments',
       required: true,
@@ -18,18 +18,20 @@ export const ExperimentMetrics: CollectionConfig = {
       },
     },
     {
-      name: 'variantId',
-      type: 'text',
+      name: 'variant',
+      type: 'relationship',
+      relationTo: 'variants',
       required: true,
       admin: {
-        description: 'The variant ID this metric is for',
+        description: 'The variant this metric is for',
       },
     },
     {
-      name: 'userId',
-      type: 'text',
+      name: 'user',
+      type: 'relationship',
+      relationTo: 'users',
       admin: {
-        description: 'User ID associated with this metric (if available)',
+        description: 'User associated with this metric (if available)',
       },
     },
     {

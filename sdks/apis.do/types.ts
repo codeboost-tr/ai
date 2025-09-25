@@ -100,6 +100,7 @@ export interface Config {
     actions: Action;
     experiments: Experiment;
     experimentMetrics: ExperimentMetric;
+    variants: Variant;
     models: Model;
     providers: Provider;
     labs: Lab;
@@ -195,6 +196,7 @@ export interface Config {
     actions: ActionsSelect<false> | ActionsSelect<true>;
     experiments: ExperimentsSelect<false> | ExperimentsSelect<true>;
     experimentMetrics: ExperimentMetricsSelect<false> | ExperimentMetricsSelect<true>;
+    variants: VariantsSelect<false> | VariantsSelect<true>;
     models: ModelsSelect<false> | ModelsSelect<true>;
     providers: ProvidersSelect<false> | ProvidersSelect<true>;
     labs: LabsSelect<false> | LabsSelect<true>;
@@ -1809,6 +1811,10 @@ export interface Experiment {
       | number
       | boolean
       | null;
+    /**
+     * Metric to track for this variant
+     */
+    metrics?: (string | ExperimentMetric)[] | null;
   }[];
   /**
    * Metrics to track for this experiment
@@ -1906,15 +1912,15 @@ export interface ExperimentMetric {
   /**
    * The experiment this metric is associated with
    */
-  experimentId: string | Experiment;
+  experiment: string | Experiment;
   /**
-   * The variant ID this metric is for
+   * The variant this metric is for
    */
-  variantId: string;
+  variant: string | Variant;
   /**
-   * User ID associated with this metric (if available)
+   * User associated with this metric (if available)
    */
-  userId?: string | null;
+  user?: (string | null) | User;
   /**
    * Session ID associated with this metric (if available)
    */
@@ -1935,6 +1941,37 @@ export interface ExperimentMetric {
    * Additional metadata for this metric (e.g., browser, device, page)
    */
   metadata?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Variations of an experiment
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "variants".
+ */
+export interface Variant {
+  id: string;
+  /**
+   * Description of this variant
+   */
+  description?: string | null;
+  /**
+   * Whether this is the control/baseline variant
+   */
+  isControl?: boolean | null;
+  /**
+   * Configuration values for this variant
+   */
+  config:
     | {
         [k: string]: unknown;
       }
@@ -3104,6 +3141,10 @@ export interface PayloadLockedDocument {
         value: string | ExperimentMetric;
       } | null)
     | ({
+        relationTo: 'variants';
+        value: string | Variant;
+      } | null)
+    | ({
         relationTo: 'models';
         value: string | Model;
       } | null)
@@ -3819,6 +3860,7 @@ export interface ExperimentsSelect<T extends boolean = true> {
         description?: T;
         isControl?: T;
         config?: T;
+        metrics?: T;
       };
   metrics?:
     | T
@@ -3851,14 +3893,25 @@ export interface ExperimentsSelect<T extends boolean = true> {
  * via the `definition` "experimentMetrics_select".
  */
 export interface ExperimentMetricsSelect<T extends boolean = true> {
-  experimentId?: T;
-  variantId?: T;
-  userId?: T;
+  experiment?: T;
+  variant?: T;
+  user?: T;
   sessionId?: T;
   metricName?: T;
   value?: T;
   timestamp?: T;
   metadata?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "variants_select".
+ */
+export interface VariantsSelect<T extends boolean = true> {
+  description?: T;
+  isControl?: T;
+  config?: T;
   updatedAt?: T;
   createdAt?: T;
 }

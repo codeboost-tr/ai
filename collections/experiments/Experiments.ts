@@ -54,45 +54,12 @@ export const Experiments: CollectionConfig = {
     },
     {
       name: 'variants',
-      type: 'array',
-      required: true,
-      minRows: 1,
+      type: 'relationship',
+      relationTo: 'variants',
+      hasMany: true,
       admin: {
         description: 'Different variations to test in this experiment',
       },
-      fields: [
-        {
-          name: 'id',
-          type: 'text',
-          required: true,
-          admin: {
-            description: 'Unique identifier for this variant',
-          },
-        },
-        {
-          name: 'description',
-          type: 'textarea',
-          admin: {
-            description: 'Description of this variant',
-          },
-        },
-        {
-          name: 'isControl',
-          type: 'checkbox',
-          defaultValue: false,
-          admin: {
-            description: 'Whether this is the control/baseline variant',
-          },
-        },
-        {
-          name: 'config',
-          type: 'json',
-          required: true,
-          admin: {
-            description: 'Configuration values for this variant',
-          },
-        },
-      ],
     },
     {
       name: 'metrics',
