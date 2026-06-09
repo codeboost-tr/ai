@@ -2,7 +2,14 @@
   "name": "llm.do",
   "version": "0.1.0",
   "description": "llm.do AI SDK Provider",
+  "type": "module",
   "main": "src/index.ts",
+  "files": [
+    "src",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test:local": "dotenvx run -- vitest"
   },
